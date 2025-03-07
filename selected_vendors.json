@@ -1,7 +1,5 @@
 {
     "vendors": [
-        "Google",
-        "Microsoft",
-        "SonicWall"
+        "Veeam"
     ]
 }
