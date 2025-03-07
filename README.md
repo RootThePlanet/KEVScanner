@@ -80,35 +80,8 @@ Potential enhancements include:
 
 Contributions are welcome! Feel free to submit a pull request or open an issue to discuss changes.
 
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
 ## Acknowledgments
 
 - [CISA](https://www.cisa.gov) for providing the vulnerability data.
 - The [Tkinter](https://docs.python.org/3/library/tkinter.html) library for the GUI framework.
 
-## Contact
-
-For any inquiries or issues, please open an issue on GitHub or contact the repository owner.
-
----
-
-Thank you for using the Known Exploited Vulnerabilities Scanner!
-```
-
-### Explanation
-
-- **Features**: Highlights key functionalities.
-- **Installation**: Step-by-step guide to set up the environment and install dependencies.
-- **Usage**: Instructions on how to run and interact with the application.
-- **File Structure**: Lists the main files and their purposes.
-- **How It Works**: Describes the data fetching, comparison, and display processes.
-- **Enhancements**: Suggests possible improvements.
-- **Contributions**: Invites contributions and provides guidelines.
-- **License**: Information about the project's license.
-- **Acknowledgments**: Credits CISA and Tkinter.
-- **Contact**: Provides contact information for further inquiries.
-
-You can customize the repository URL and any other specific details as needed.

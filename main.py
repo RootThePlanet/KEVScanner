@@ -41,10 +41,12 @@ def load_selected_vendors():
 def save_selected_vendors(vendors):
     save_data_to_file({"vendors": vendors}, selected_vendors_file)
 
-def update_vendors_listbox(vendors):
+def update_vendors_listbox(vendors, selected_vendors):
     listbox.delete(0, END)
     for vendor in sorted(vendors):
         listbox.insert(END, vendor)
+        if vendor in selected_vendors:
+            listbox.select_set(END)
 
 def show_vulnerabilities():
     selected_indices = listbox.curselection()
@@ -82,7 +84,13 @@ root = tk.Tk()
 root.title("Known Exploited Vulnerabilities Scanner")
 
 frame_left = tk.Frame(root)
-frame_left.pack(side=tk.LEFT, padx=10, pady=10)
+frame_left.pack(side=tk.LEFT, padx=10, pady=10, fill=tk.Y)
+
+frame_middle = tk.Frame(root)
+frame_middle.pack(side=tk.LEFT, padx=10, pady=10, fill=tk.Y)
+
+frame_right = tk.Frame(root)
+frame_right.pack(side=tk.LEFT, padx=10, pady=10, fill=tk.BOTH, expand=True)
 
 search_label = tk.Label(frame_left, text="Search Vendor")
 search_label.pack()
@@ -94,10 +102,7 @@ listbox_label = tk.Label(frame_left, text="Select Vendors")
 listbox_label.pack()
 
 listbox = Listbox(frame_left, selectmode=MULTIPLE)
-listbox.pack(padx=10, pady=10)
-
-frame_middle = tk.Frame(root)
-frame_middle.pack(side=tk.LEFT, padx=10, pady=10)
+listbox.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
 
 selected_vendors_var = tk.StringVar()
 selected_vendors_label = tk.Label(frame_middle, text="Selected Vendors")
@@ -106,30 +111,22 @@ selected_vendors_label.pack()
 selected_vendors_box = tk.Label(frame_middle, textvariable=selected_vendors_var, justify=tk.LEFT)
 selected_vendors_box.pack(padx=10, pady=10)
 
-frame_right = tk.Frame(root)
-frame_right.pack(side=tk.RIGHT, padx=10, pady=10)
-
 show_button = tk.Button(frame_left, text="Show Vulnerabilities", command=show_vulnerabilities)
 show_button.pack()
 
 text_box = tk.Text(frame_right, wrap=tk.WORD, state=tk.DISABLED)
-text_box.pack(padx=10, pady=10)
+text_box.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
 
 def search_vendors(event):
     search_term = search_entry.get().lower()
-    filtered_vendors = [vendor for vendor in vendors if search_term in vendor.lower()]
-    update_vendors_listbox(filtered_vendors)
+    filtered_vendors = [vendor for vendor in all_vendors if search_term in vendor.lower()]
+    update_vendors_listbox(filtered_vendors, selected_vendors)
 
 search_entry.bind("<KeyRelease>", search_vendors)
 
-vendors = sorted(set(vuln["vendorProject"] for vuln in vulnerabilities))
-update_vendors_listbox(vendors)
+all_vendors = sorted(set(vuln["vendorProject"] for vuln in vulnerabilities))
+selected_vendors = set(load_selected_vendors())
 
-selected_vendors = load_selected_vendors()
-if selected_vendors:
-    for vendor in selected_vendors:
-        index = vendors.index(vendor)
-        listbox.select_set(index)
-    selected_vendors_var.set(", ".join(selected_vendors))
+update_vendors_listbox(all_vendors, selected_vendors)
 
 root.mainloop()
