@@ -1,25 +1,27 @@
 # Known Exploited Vulnerabilities Scanner (KEVS)
 
-This Python application scans a hosted JSON file from CISA to identify known exploited vulnerabilities. It allows users to select vendors from a picklist, view vulnerabilities related to the selected vendors, and highlight new vulnerabilities added since the last scan.
+This Python application scans CISA's Known Exploited Vulnerabilities (KEV) catalogue and displays vulnerabilities filtered by vendor. It highlights entries that are new since the previous scan and automatically refreshes the data every hour.
 
 ## Features
 
-- Fetches vulnerability data from CISA's hosted JSON file.
-- Displays a list of unique vendors.
-- Allows users to select multiple vendors.
-- Displays vulnerabilities related to the selected vendors.
-- Highlights new vulnerabilities since the last scan.
-- Provides detailed information for each vulnerability.
-- Includes a link to the CVSS score for each vulnerability.
-- Saves and loads selected vendors.
-- Automatically refreshes the data every hour.
+- Fetches the latest KEV data from CISA on startup and every hour.
+- Displays a scrollable list of unique vendors.
+- Real-time vendor search/filter.
+- Select All / Deselect All vendor controls.
+- Displays vulnerabilities for selected vendors sorted by date (newest first).
+- **Highlights new vulnerabilities** (added since the last scan) in red.
+- Shows all relevant fields: CVE ID, vendor, product, name, date added, due date, required action, ransomware use, and description.
+- Clickable NVD links open the full CVE detail page in your browser.
+- Status bar shows the last update time and new vulnerability count.
+- Saves and restores selected vendors between sessions.
+- Background fetch keeps the UI responsive at all times.
 
 ## Installation
 
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/your-username/known-exploited-vulnerabilities-scanner.git
-   cd known-exploited-vulnerabilities-scanner
+   git clone https://github.com/RootThePlanet/KEVScanner.git
+   cd KEVScanner
    ```
 
 2. **Create and Activate a Virtual Environment:**
@@ -33,6 +35,8 @@ This Python application scans a hosted JSON file from CISA to identify known exp
    pip install -r requirements.txt
    ```
 
+> **Note:** `tkinter` is part of Python's standard library and does not need to be installed via pip. On some Linux distributions you may need to install the `python3-tk` system package (e.g. `sudo apt install python3-tk`).
+
 ## Usage
 
 1. **Run the Application:**
@@ -41,40 +45,37 @@ This Python application scans a hosted JSON file from CISA to identify known exp
    ```
 
 2. **Interact with the GUI:**
-   - Use the search box to filter vendors in the listbox.
-   - Select multiple vendors from the listbox.
-   - View vulnerabilities related to the selected vendors in the right panel.
-   - Click "Click for more details" to view detailed information about the vulnerability.
-   - Click "CVSS Score" to view the CVSS score of the vulnerability.
+   - Type in the **Search Vendor** box to filter the vendor list in real time.
+   - Select one or more vendors in the listbox (use **Select All** / **Deselect All** as needed).
+   - Click **Show Vulnerabilities** to display matching CVEs in the right panel.
+   - New vulnerabilities (added since the last scan) are highlighted in red with a 🆕 prefix.
+   - Click any **NVD Detail** link to open the full CVE record in your browser.
+   - Click **Refresh Data** to manually fetch the latest KEV catalogue.
+   - The status bar at the bottom shows the last update time and how many new CVEs were found.
 
 ## File Structure
 
-- `main.py`: Main application script.
-- `requirements.txt`: List of dependencies.
-- `previous_vulnerabilities.json`: File to save previous vulnerabilities for comparison.
-- `selected_vendors.json`: File to save selected vendors.
+- `main.py` — Main application script.
+- `requirements.txt` — Python dependencies (`requests`).
+- `vulnerabilities.json` — Latest KEV data cached locally.
+- `previous_vulnerabilities.json` — Previous snapshot used to detect new entries.
+- `selected_vendors.json` — Persisted vendor selections.
 
 ## How It Works
 
-1. **Fetching Data:**
-   - The application fetches vulnerability data from the CISA URL.
+1. **Startup** — Any previously cached data is loaded immediately so the UI is usable offline.
+2. **Fetch** — The latest KEV JSON is fetched from CISA in a background thread.
+3. **Compare** — The fresh data is compared against the previous snapshot (`previous_vulnerabilities.json`) to identify new CVEs.
+4. **Rotate** — The current local file becomes the new previous snapshot; the fresh data is saved as the current file.
+5. **Display** — Vendors are updated in the listbox; new CVE IDs are tracked for highlighting when results are shown.
+6. **Auto-refresh** — Steps 2–5 repeat automatically every hour.
 
-2. **Comparing Data:**
-   - The application compares the current data with the previously saved data to identify new vulnerabilities.
+## Potential Enhancements
 
-3. **Displaying Data:**
-   - The application displays the vulnerabilities in the GUI, highlighting new ones.
-
-4. **Saving and Loading Data:**
-   - The application saves the selected vendors and previous vulnerabilities to JSON files and loads them on startup.
-
-## Enhancements
-
-Potential enhancements include:
-- Adding more filtering options (e.g., by product, date).
-- Integrating more data sources.
-- Adding more detailed CVSS information.
-- Implementing user authentication for saving preferences.
+- Additional filtering options (by product, date range, severity).
+- Export results to CSV or PDF.
+- Desktop notifications for new vulnerabilities.
+- Integration with additional threat-intelligence sources.
 
 ## Contributions
 
@@ -82,6 +83,6 @@ Contributions are welcome! Feel free to submit a pull request or open an issue t
 
 ## Acknowledgments
 
-- [CISA](https://www.cisa.gov) for providing the vulnerability data.
+- [CISA](https://www.cisa.gov) for providing the KEV catalogue.
 - The [Tkinter](https://docs.python.org/3/library/tkinter.html) library for the GUI framework.
 
